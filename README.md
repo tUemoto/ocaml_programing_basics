@@ -12,7 +12,18 @@
 # imageのビルド
 $ docker image build -t ocaml_practice
 
-# 
-$ docker run --rm -v ${pwd}:/min-caml -w /min-caml ocaml_practice make
+# 作業ディレクトリをdockerホスト上にマウントしてコンテナを起動する
+$ docker run -it --rm -v `pwd`/min-caml:/test -w /test ocaml_practice
+
+
+```
+
+## 実行
+```
+# OCamlインタプリタの起動
+$ ocaml
+
+# OCamlインタプリタ上でファイルの読み込み
+$ #use "ファイル名"
 
 ```
