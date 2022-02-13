@@ -37,15 +37,15 @@
 (* kyori_wo_hyoji: string -> string -> string *)
 let kyori_wo_hyoji eki1 eki2 = 
   let kanji1 = romaji_to_kanji eki1 global_ekimei_list in
-    if kanji1 = "" 
-      then eki1 ^ "という駅は存在しません"
-      else let kanji2 = romaji_to_kanji eki2 global_ekimei_list in
-        if kanji2 = ""
-          then eki2 ^ "という駅は存在しません"
-          else let kyori = get_ekikan_kyori kanji1 kanji2 global_ekikan_list in
-          if kyori = max_float
-            then kanji1 ^ "駅と" ^ kanji2 ^ "駅はつながっていません"
-            else kanji1 ^ "駅から" ^ kanji2 ^ "駅までは" ^ string_of_float kyori ^ "kmです"
+  if kanji1 = "" 
+    then eki1 ^ "という駅は存在しません"
+    else let kanji2 = romaji_to_kanji eki2 global_ekimei_list in
+    if kanji2 = ""
+      then eki2 ^ "という駅は存在しません"
+      else let kyori = get_ekikan_kyori kanji1 kanji2 global_ekikan_list in
+      if kyori = max_float
+        then kanji1 ^ "駅と" ^ kanji2 ^ "駅はつながっていません"
+        else kanji1 ^ "駅から" ^ kanji2 ^ "駅までは" ^ string_of_float kyori ^ "kmです"
 
  (* test *)
  (* 
