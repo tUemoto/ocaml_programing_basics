@@ -29,3 +29,9 @@ let test4 = koushin koushin1 yoyogiuehara [yoyogikouen; meijijinguumae] = [
   };
   meijijinguumae
 ]
+
+(* saitanのテスト *)
+let eki_a = {namae = "test1"; saitan_kyori = 0.1; temae_list = ["test1"]}
+let eki_b = {namae = "test2"; saitan_kyori = 0.2; temae_list = ["test2"]}
+let eki_c = {namae = "test3"; saitan_kyori = 0.3; temae_list = ["test3"]}
+let test5 = saitan_wo_bunri [eki_a; eki_b; eki_c] = (eki_a, [eki_b; eki_c])

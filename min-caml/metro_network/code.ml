@@ -42,3 +42,22 @@ let rec koushin f p v = match v with
   [] -> []
   |first::rest -> f p first::koushin f p rest
 
+(* 目的: eki_t list型のリストlstを受け取り、「最短距離最小の駅」「最短距離最小の駅以外からなるリスト」を返却する *)
+(* saitan_wo_bunri: eki_t list ->  eki_t * eki_t list*)
+let rec saitan_wo_bunri lst = match lst with
+  [] -> ({namae = "error"; saitan_kyori = max_float; temae_list = []}, [])
+  |first::rest -> List.fold_right (
+    fun first (p, v) -> if first.saitan_kyori < p.saitan_kyori
+      then (first, p::v)
+      else (p, first::v)
+    ) rest (first, [])
+
+
+(* 以下fold_rightを使わない書き方 *)
+(* let rec saitan_wo_bunri lst = match lst with
+  [] -> ({namae = "error"; saitan_kyori = max_float; temae_list = []}, [])
+  |first::[] -> (first, [])
+  |first::rest -> let (saitan_rest, extracted) = saitan_wo_bunri rest
+  in if first.saitan_kyori < saitan_rest.saitan_kyori
+    then (first, saitan_rest::extracted)
+    else (saitan_rest, first::extracted) *)
