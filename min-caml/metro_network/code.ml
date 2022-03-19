@@ -33,27 +33,6 @@ in
     }
   else q
 
-(* test
-# use "metro_network/code.ml";;
-*)
-let yoyogiuehara = {
-  namae = "代々木上原"; saitan_kyori = max_float; temae_list = ["代々木上原"]
-}
-let yoyogikouen = {
-  namae = "代々木公園"; saitan_kyori = max_float; temae_list = ["代々木公園"]
-}
-let meijijinguumae = {
-  namae = "明治神宮前"; saitan_kyori = max_float; temae_list = ["明治神宮前"]
-}
-
-let test1 = koushin1 yoyogiuehara yoyogikouen = {
-  namae = "代々木公園"; saitan_kyori = 1.0; temae_list = ["代々木公園"; "代々木上原"]
-}
-let test2 = koushin1 yoyogikouen yoyogiuehara = {
-  namae = "代々木上原"; saitan_kyori = 1.0; temae_list = ["代々木上原"; "代々木公園"]
-}
-let test3 = koushin1 yoyogiuehara meijijinguumae = meijijinguumae
-
 (* 目的: 
 直前に確定した駅p(eki_t型)と未確定の駅のリストv(eki_t list型)を受け取る
 必要な更新処理(koushin1)を行ったあと、未確定の駅のリストを返却する
@@ -63,10 +42,3 @@ let rec koushin f p v = match v with
   [] -> []
   |first::rest -> f p first::koushin f p rest
 
-(* test *)
-let test4 = koushin koushin1 yoyogiuehara [yoyogikouen; meijijinguumae] = [
-  {
-  namae = "代々木公園"; saitan_kyori = 1.0; temae_list = ["代々木公園"; "代々木上原"]
-  };
-  meijijinguumae
-]

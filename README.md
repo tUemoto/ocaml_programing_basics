@@ -27,3 +27,6 @@ $ ocaml
 $ #use "ファイル名"
 
 ```
+
+## ocamlの日本語化
+https://note103.hateblo.jp/entry/2016/07/03/112928
