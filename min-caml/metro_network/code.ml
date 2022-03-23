@@ -61,3 +61,78 @@ let rec saitan_wo_bunri lst = match lst with
   in if first.saitan_kyori < saitan_rest.saitan_kyori
     then (first, saitan_rest::extracted)
     else (saitan_rest, first::extracted) *)
+
+(* 目的:
+直前に確定した駅p(eki_t型)と未確定の駅のリストv(eki_t list型)を受け取る
+必要な更新処理(koushin1)を行ったあと、未確定の駅のリストを返却する
+その際、利用する駅間リストを指定できるようにする
+（koushinの改造版）
+ *)
+ (* koushin_kai: eki_t -> eki_t list -> ekikan_t list -> eki_t list *)
+ let rec koushin_kai p v ekikan_list = match p with
+    {namae = pn; saitan_kyori = pk; temae_list = pt} ->
+      List.map (fun q -> match q with
+        {namae = qn; saitan_kyori = qk; temae_list = qt} -> 
+          let ekikan_kyori = get_ekikan_kyori pn qn ekikan_list
+          in
+            if ekikan_kyori +. pk < qk then {
+              namae = qn;
+              saitan_kyori = ekikan_kyori +. pk;
+              temae_list = append [qn] pt
+              }
+            else q
+        ) v
+
+(* 目的: eki_t list型の(未確定の)駅のリストとekikan_t list型の駅間リストを受け取り
+ダイクストラのアルゴリズムにしたがって各駅についての最短距離と最短経路が正しく入ったリスト(eki_t list)を返す
+*)
+(* dijkstra_main: eki_t list -> ekikan_t list -> eki_t list *)
+let rec dijkstra_main eki_t_list ekikan_t_list = match eki_t_list with
+  [] -> []
+  |first::rest -> 
+    let (saitan, nokori) = saitan_wo_bunri(eki_t_list)
+    in
+      let updated = koushin_kai saitan nokori ekikan_t_list
+      in
+        saitan::dijkstra_main updated ekikan_t_list
+
+(* 
+  目的: ローマ字の駅名(string)と駅名リスト(ekimei_t list)を受け取って、
+  その駅の漢字表記を文字列で返す
+*)
+(* romaji_to_kanji string -> elimei_t list -> string *)
+let rec romaji_to_kanji str lst = match lst with
+  [] -> ""
+  |{kanji = kj; kana = kn; romaji = r; shozoku = s}::rest -> 
+    if r = str
+      then kj
+      else romaji_to_kanji str rest
+
+
+(* 目的：ekimei list から eki list を作る *) 
+(* make_initial_eki_list : ekimei_t list -> string -> eki_t list *) 
+let make_initial_eki_list ekimei_list kiten = 
+  List.map (fun ekimei -> match ekimei with 
+	     {kanji = k; kana = a; romaji = r; shozoku = s} -> 
+	       if k = kiten 
+	       then {namae = k; saitan_kyori = 0.; temae_list = [k]} 
+	       else {namae = k; saitan_kyori = infinity; temae_list = []}) 
+	   ekimei_list 
+ 
+(* 目的：受け取った eki_list から shuten のレコードを探し出す *) 
+(* find : string -> eki_t list -> eki_t *) 
+let rec find shuten eki_list = match eki_list with 
+  [] -> {namae = ""; saitan_kyori = infinity; temae_list = []} 
+  | ({namae = n; saitan_kyori = s; temae_list = t} as first)::rest -> 
+      if n = shuten then first else find shuten rest 
+
+(* 目的:
+始点と終点のローマ字を引数に取り、2駅間の最短距離を返却する
+ *)
+(* dijkstra: string -> string -> eki_t *)
+let rec dijkstra shiten shuten = 
+  let shiten_kanji = romaji_to_kanji shiten global_ekimei_list
+  in let shuten_kanji = romaji_to_kanji shuten global_ekimei_list
+  in let eki_list = make_initial_eki_list global_ekimei_list shiten_kanji
+  in let calculated = dijkstra_main eki_list global_ekikan_list
+  in find shuten_kanji calculated
